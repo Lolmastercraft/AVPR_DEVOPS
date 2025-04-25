@@ -187,7 +187,7 @@ resource "aws_security_group" "jump_sg" {
     from_port   = 3389
     to_port     = 3389
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]   # ← pon tu IP pública
+    cidr_blocks = ["0.0.0.0/0"]   
   }
 
   egress {
@@ -200,7 +200,7 @@ resource "aws_security_group" "jump_sg" {
 }
 
 resource "aws_instance" "jump_win" {
-  ami                         = "ami-0c765d44cf1f25d26"   # Windows 2022 en us-east-1
+  ami                         = "ami-0c765d44cf1f25d26"   
   instance_type               = "t2.medium"
   subnet_id                   = data.aws_subnet.pub.id
   vpc_security_group_ids      = [aws_security_group.jump_sg.id]
