@@ -187,7 +187,7 @@ resource "aws_security_group" "jump_sg" {
     from_port   = 3389
     to_port     = 3389
     protocol    = "tcp"
-    cidr_blocks = ["YOUR_IP/32"]   # ← pon tu IP pública
+    cidr_blocks = ["0.0.0.0/0"]   # ← pon tu IP pública
   }
 
   egress {
