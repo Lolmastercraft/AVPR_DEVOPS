@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel de Administración</title>
+  <link rel="stylesheet" href="css/admin.css"/>
+</head>
+<body>
+  <header>
+    <h1>👑 Panel Admin</h1>
+    <nav>
+      <a href="/">Tienda</a>
+      <a href="/api/logout">Cerrar Sesión</a>
+    </nav>
+  </header>
+  <main>
+    <section class="admin-panel">
+      <h2>Crear Producto</h2>
+      <form id="create-form">
+        <label>Nombre:      <input type="text" name="nombre" required/></label>
+        <label>Álbum:       <input type="text" name="album"  required/></label>
+        <label>Autor:       <input type="text" name="autor"  required/></label>
+        <label>Link imagen: <input type="url"  name="link"   required/></label>
+        <label>Precio:      <input type="number" step="0.01" name="precio"   required/></label>
+        <label>Cantidad:    <input type="number"             name="cantidad" required/></label>
+        <button type="submit">Crear</button>
+      </form>
+    </section>
+    <section class="admin-panel">
+      <h2>Gestión de Productos</h2>
+      <table id="products-table">
+        <thead>
+          <tr>
+            <th>Nombre</th><th>Álbum</th><th>Autor</th><th>Link</th><th>Precio</th><th>Cantidad</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+  <footer><p>&copy; 2025 Vinilos Clásicos</p></footer>
+  <script>
+    async function loadProducts(){
+      const res = await fetch('/api/productos');
+      if(res.status===401) return window.location.href = '/login.html';
+      const items = await res.json();
+      const tbody = document.querySelector('#products-table tbody');
+      tbody.innerHTML = items.map(it => `
+        <tr data-id="${it.id}">
+          <td><input name="nombre"   value="${it.nombre}"/></td>
+          <td><input name="album"    value="${it.album}"/></td>
+          <td><input name="autor"    value="${it.autor}"/></td>
+          <td><input name="link"     value="${it.link}"/></td>
+          <td><input name="precio"   type="number" step="0.01" value="${it.precio}"/></td>
+          <td><input name="cantidad" type="number"             value="${it.cantidad}"/></td>
+          <td>
+            <button class="edit">✏️</button>
+            <button class="delete">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+
+      document.querySelectorAll('.edit').forEach(btn=>{
+        btn.onclick = async e => {
+          const row = e.target.closest('tr');
+          const id  = row.dataset.id;
+          const data = {
+            nombre:   row.querySelector('input[name=nombre]').value,
+            album:    row.querySelector('input[name=album]').value,
+            autor:    row.querySelector('input[name=autor]').value,
+            link:     row.querySelector('input[name=link]').value,
+            precio:   parseFloat(row.querySelector('input[name=precio]').value),
+            cantidad: parseInt(row.querySelector('input[name=cantidad]').value,10)
+          };
+          await fetch(`/api/productos/${id}`, {
+            method: 'PUT',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify(data)
+          });
+          alert('Producto actualizado');
+          loadProducts();
+        };
+      });
+
+      document.querySelectorAll('.delete').forEach(btn=>{
+        btn.onclick = async e => {
+          const id = e.target.closest('tr').dataset.id;
+          if(!confirm('Eliminar este producto?')) return;
+          await fetch(`/api/productos/${id}`, { method:'DELETE' });
+          alert('Producto eliminado');
+          loadProducts();
+        };
+      });
+    }
+
+    document.getElementById('create-form').onsubmit = async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target), obj = {};
+      for(let [k,v] of fd) obj[k] = k==='precio'?parseFloat(v):k==='cantidad'?parseInt(v):v;
+      await fetch('/api/productos', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(obj)
+      });
+      alert('Producto creado');
+      e.target.reset();
+      loadProducts();
+    };
+
+    window.onload = loadProducts;
+  </script>
+</body>
+</html>

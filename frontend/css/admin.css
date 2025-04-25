@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg: #181818;
+  --surface: #242424;
+  --accent: #d4af37;
+  --hover: #c39f2b;
+  --text: #fff;
+  --secondary: #bbbbbb;
+  --trans: 0.3s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+header {
+  background: var(--surface);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid var(--accent);
+}
+
+header h1 {
+  color: var(--accent);
+}
+
+header nav a {
+  margin-left: 1rem;
+  color: var(--secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--trans);
+}
+header nav a:hover {
+  color: var(--accent);
+}
+
+main {
+  padding: 2rem;
+}
+
+.admin-panel {
+  background: var(--surface);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+
+.admin-panel h2 {
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.actions a {
+  background: var(--accent);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--bg);
+  font-weight: 600;
+  transition: background var(--trans), transform var(--trans);
+}
+
+.actions a:hover {
+  background: var(--hover);
+  transform: translateY(-2px);
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: var(--surface);
+  border-top: 3px solid var(--accent);
+  margin-top: 2rem;
+}

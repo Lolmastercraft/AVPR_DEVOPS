@@ -1,0 +1,142 @@
+/* Importación de fuente moderna */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg-color: #181818;
+  --surface-color: #242424;
+  --accent-color: #d4af37;
+  --accent-color-hover: #c39f2b;
+  --text-color: #ffffff;
+  --text-secondary: #bbbbbb;
+  --transition-duration: 0.3s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+header {
+  background-color: var(--surface-color);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid var(--accent-color);
+}
+
+header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+header nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-duration);
+}
+header nav a:hover {
+  color: var(--accent-color);
+}
+
+main {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.vinyl-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2rem;
+}
+
+.vinyl-item {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  transition: transform var(--transition-duration), box-shadow var(--transition-duration);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.vinyl-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.7);
+}
+
+.vinyl-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.vinyl-item h2 {
+  font-size: 1.1rem;
+  margin: 1rem;
+  color: var(--accent-color);
+  flex-grow: 1;
+}
+
+.vinyl-item button.add-to-cart {
+  background-color: var(--accent-color);
+  color: var(--bg-color);
+  border: none;
+  border-top: 1px solid rgba(0,0,0,0.2);
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-duration), transform var(--transition-duration);
+}
+
+.vinyl-item button.add-to-cart:hover {
+  background-color: var(--accent-color-hover);
+  transform: scale(1.05);
+}
+
+.vinyl-item button.add-to-cart:active {
+  transform: scale(0.98);
+}
+
+#cart-items p {
+  font-size: 1.2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  margin-top: 2rem;
+}
+
+footer {
+  background-color: var(--surface-color);
+  padding: 1rem;
+  text-align: center;
+  border-top: 3px solid var(--accent-color);
+  margin-top: 2rem;
+}
+
+footer p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    text-align: center;
+  }
+  .vinyl-list {
+    gap: 1rem;
+  }
+}

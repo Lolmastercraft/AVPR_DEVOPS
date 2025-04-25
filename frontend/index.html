@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vinilos Clásicos</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <header>
+    <h1>Colección de Discos de Vinilo</h1>
+    <nav>
+      <a href="/carrito.html">Carrito</a>
+      <a href="/admin.html">Log in Admin</a>
+    </nav>
+  </header>
+  <main>
+    <section class="vinyl-list" id="vinyl-list"></section>
+  </main>
+  <footer>
+    <p>&copy; 2025 Vinilos Clásicos</p>
+  </footer>
+  <script>
+    async function loadProducts() {
+      const res = await fetch('/api/productos');
+      const items = await res.json();
+      const container = document.getElementById('vinyl-list');
+      if (!items.length) {
+        container.innerHTML = '<p>No hay productos disponibles.</p>';
+        return;
+      }
+      items.forEach(item => {
+        const art = document.createElement('article');
+        art.className = 'vinyl-item';
+        art.dataset.id = item.id;
+        art.innerHTML = `
+          <img src="${item.link}" alt="${item.nombre}">
+          <h2>${item.nombre}</h2>
+          <p>Álbum: ${item.album}</p>
+          <p>Autor: ${item.autor}</p>
+          <p>Precio: $${item.precio}</p>
+          <p>Cantidad disponible: ${item.cantidad}</p>
+          <button class="add-to-cart">Agregar al carrito</button>
+        `;
+        container.appendChild(art);
+      });
+      document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const el = e.target.closest('.vinyl-item');
+          const product = {
+            id:       el.dataset.id,
+            nombre:   el.querySelector('h2').textContent,
+            album:    el.querySelector('p:nth-of-type(1)').textContent.replace('Álbum: ',''),
+            autor:    el.querySelector('p:nth-of-type(2)').textContent.replace('Autor: ',''),
+            precio:   parseFloat(el.querySelector('p:nth-of-type(3)').textContent.replace('Precio: $','')),
+            cantidad: parseInt(el.querySelector('p:nth-of-type(4)').textContent.replace('Cantidad disponible: ',''))
+          };
+          const cart = JSON.parse(localStorage.getItem('cart')) || [];
+          cart.push(product);
+          localStorage.setItem('cart', JSON.stringify(cart));
+          alert(`“${product.nombre}” agregado al carrito`);
+        });
+      });
+    }
+    loadProducts();
+  </script>
+</body>
+</html>
