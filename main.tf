@@ -168,21 +168,37 @@ resource "aws_dynamodb_table" "productos" {
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "id"
 
+  # Clave primaria
   attribute {
     name = "id"
     type = "S"
   }
 
+  # ---------- Índice por autor ----------
   attribute {
     name = "autor"
     type = "S"
   }
 
+  global_secondary_index {
+    name            = "AutorIndex"
+    hash_key        = "autor"
+    projection_type = "ALL"
+  }
+
+  # ---------- Índice por álbum ----------
   attribute {
     name = "album"
     type = "S"
   }
+
+  global_secondary_index {
+    name            = "AlbumIndex"
+    hash_key        = "album"
+    projection_type = "ALL"
+  }
 }
+
 
 
 # ────────────────────────────────────────────────────────────
