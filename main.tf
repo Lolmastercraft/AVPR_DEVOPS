@@ -93,40 +93,72 @@ resource "aws_route_table_association" "pub_assoc" {
   route_table_id = aws_route_table.public.id
 }
 
-# Security Group for EC2 (web server)
+############################################
+# SG para la EC2 (web_sg)
+############################################
 resource "aws_security_group" "web_sg" {
   name        = "vinyl-web-sg"
   description = "Allow SSH and HTTP"
   vpc_id      = aws_vpc.main.id
 
-  ingress = [
-    { description = "SSH", from_port = 22, to_port = 22, protocol = "tcp", cidr_blocks = ["0.0.0.0/0"] },
-    { description = "HTTP", from_port = 80, to_port = 80, protocol = "tcp", cidr_blocks = ["0.0.0.0/0"] }
-  ]
+  # SSH
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-  egress = [
-    { description = "All outbound", from_port = 0, to_port = 0, protocol = "-1", cidr_blocks = ["0.0.0.0/0"] }
-  ]
+  # HTTP
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Salida a cualquier destino
+  egress {
+    description = "All outbound"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   tags = { Name = "vinyl-web-sg" }
 }
 
-# Security Group for RDS
+############################################
+# SG para RDS (rds_sg)
+############################################
 resource "aws_security_group" "rds_sg" {
   name        = "vinyl-rds-sg"
   description = "Allow MySQL from EC2 web server"
   vpc_id      = aws_vpc.main.id
 
-  ingress = [
-    { description = "MySQL from web", from_port = 3306, to_port = 3306, protocol = "tcp",
-      security_groups = [aws_security_group.web_sg.id] }
-  ]
-  egress = [
-    { description = "All outbound", from_port = 0, to_port = 0, protocol = "-1", cidr_blocks = ["0.0.0.0/0"] }
-  ]
+  # MySQL solo desde el SG de la web
+  ingress {
+    description              = "MySQL from web"
+    from_port                = 3306
+    to_port                  = 3306
+    protocol                 = "tcp"
+    security_groups          = [aws_security_group.web_sg.id]
+  }
+
+  egress {
+    description = "All outbound"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   tags = { Name = "vinyl-rds-sg" }
 }
+
 
 # Subnet group for RDS (requires subnets in at least two AZs)
 resource "aws_db_subnet_group" "rds_subnets" {
