@@ -1,68 +1,48 @@
+<!-- frontend/index.html - Main frontend page for vinyl store -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vinilos Clásicos</title>
-  <link rel="stylesheet" href="css/style.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda de Vinilos</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
-    <h1>Colección de Discos de Vinilo</h1>
-    <nav>
-      <a href="/carrito.html">Carrito</a>
-      <a href="/admin.html">Log in Admin</a>
-    </nav>
+    <h1>Tienda de Vinilos</h1>
   </header>
+
   <main>
-    <section class="vinyl-list" id="vinyl-list"></section>
+    <!-- Product List Section -->
+    <section id="products-section">
+      <h2>Productos disponibles</h2>
+      <ul id="product-list"></ul>
+    </section>
+
+    <!-- Admin Login Section -->
+    <section id="login-section">
+      <h2>Login de Administrador</h2>
+      <form id="login-form">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Contraseña" required />
+        <button type="submit">Ingresar</button>
+      </form>
+      <p id="login-msg" class="msg"></p>
+    </section>
+
+    <!-- Admin Product Management (hidden until login) -->
+    <section id="admin-section" style="display:none;">
+      <h2>Gestionar Productos</h2>
+      <form id="product-form">
+        <input type="text" id="prod-name" placeholder="Nombre del vinilo" required />
+        <input type="number" step="0.01" id="prod-price" placeholder="Precio" required />
+        <button type="submit">Agregar Producto</button>
+        <button type="button" id="cancel-edit" style="display:none;">Cancelar</button>
+      </form>
+      <p id="form-msg" class="msg"></p>
+    </section>
   </main>
-  <footer>
-    <p>&copy; 2025 Vinilos Clásicos</p>
-  </footer>
-  <script>
-    async function loadProducts() {
-      const res = await fetch('/api/productos');
-      const items = await res.json();
-      const container = document.getElementById('vinyl-list');
-      if (!items.length) {
-        container.innerHTML = '<p>No hay productos disponibles.</p>';
-        return;
-      }
-      items.forEach(item => {
-        const art = document.createElement('article');
-        art.className = 'vinyl-item';
-        art.dataset.id = item.id;
-        art.innerHTML = `
-          <img src="${item.link}" alt="${item.nombre}">
-          <h2>${item.nombre}</h2>
-          <p>Álbum: ${item.album}</p>
-          <p>Autor: ${item.autor}</p>
-          <p>Precio: $${item.precio}</p>
-          <p>Cantidad disponible: ${item.cantidad}</p>
-          <button class="add-to-cart">Agregar al carrito</button>
-        `;
-        container.appendChild(art);
-      });
-      document.querySelectorAll('.add-to-cart').forEach(btn => {
-        btn.addEventListener('click', e => {
-          const el = e.target.closest('.vinyl-item');
-          const product = {
-            id:       el.dataset.id,
-            nombre:   el.querySelector('h2').textContent,
-            album:    el.querySelector('p:nth-of-type(1)').textContent.replace('Álbum: ',''),
-            autor:    el.querySelector('p:nth-of-type(2)').textContent.replace('Autor: ',''),
-            precio:   parseFloat(el.querySelector('p:nth-of-type(3)').textContent.replace('Precio: $','')),
-            cantidad: parseInt(el.querySelector('p:nth-of-type(4)').textContent.replace('Cantidad disponible: ',''))
-          };
-          const cart = JSON.parse(localStorage.getItem('cart')) || [];
-          cart.push(product);
-          localStorage.setItem('cart', JSON.stringify(cart));
-          alert(`“${product.nombre}” agregado al carrito`);
-        });
-      });
-    }
-    loadProducts();
-  </script>
+
+  <script src="app.js"></script>
 </body>
 </html>
