@@ -175,6 +175,42 @@ resource "aws_route53_record" "site" {
 }
 
 ############################################
+# JUMP SERVER WINDOWS (RDP)
+############################################
+resource "aws_security_group" "jump_sg" {
+  name        = "vinyl-jump-sg"
+  vpc_id      = data.aws_vpc.vpc.id
+  description = "RDP desde tu IP"
+
+  ingress {
+    description = "RDP"
+    from_port   = 3389
+    to_port     = 3389
+    protocol    = "tcp"
+    cidr_blocks = ["YOUR_IP/32"]   # ← pon tu IP pública
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    }
+  tags = { Name = "vinyl-jump-sg" }
+}
+
+resource "aws_instance" "jump_win" {
+  ami                         = "ami-0c765d44cf1f25d26"   # Windows 2022 en us-east-1
+  instance_type               = "t2.medium"
+  subnet_id                   = data.aws_subnet.pub.id
+  vpc_security_group_ids      = [aws_security_group.jump_sg.id]
+  key_name                    = var.key_name
+  associate_public_ip_address = true
+  tags = { Name = "vinyl-jump" }
+}
+
+
+############################################
 # OUTPUTS
 ############################################
 output "ec2_public_ip" { value = aws_instance.web.public_ip }
